@@ -1197,7 +1197,7 @@ window.generarNotaPDF=function(){
   doc.text('EMISOR',M+3,y+6);
   doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
   doc.text('Tipic-Go · Juan Esteban Ramírez Alava',M+3,y+11);
-  doc.text('RUC: 0105505531 · Régimen General',M+3,y+16);
+  doc.text('RUC: 0105505531001 · Régimen General',M+3,y+16);
   doc.text('Cuenca, Ecuador',M+3,y+21);
   doc.text('Tel: 0984970758 / 0979122867',M+3,y+26);
  
@@ -1283,7 +1283,7 @@ window.generarNotaPDF=function(){
     doc.setPage(i);
     doc.setFillColor(...verde);doc.rect(0,287,210,10,'F');
     doc.setFontSize(7);doc.setTextColor(255,255,255);
-    doc.text('Tipic-Go · RUC 0105505531 · tipic.go@gmail.com · @tipigo593 · Cuenca, Ecuador',W/2,292,{align:'center'});
+    doc.text('Tipic-Go · RUC 0105505531001 · tipic.go@gmail.com · @tipigo593 · Cuenca, Ecuador',W/2,292,{align:'center'});
   }
  
   doc.save('Tipic-Go_Nota_Venta_'+numero+'_'+fecha+'.pdf');
