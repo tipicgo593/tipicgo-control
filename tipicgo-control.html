@@ -121,6 +121,24 @@ textarea#fb-config-input{background:rgba(255,255,255,.12);border:1.5px solid rgb
 .kpi-lbl{font-size:10px;color:var(--muted);margin-top:2px}
 .kpi.green .kpi-val{color:var(--g1)}.kpi.amber .kpi-val{color:var(--a1)}.kpi.red .kpi-val{color:var(--r1)}
 /* FACTURACIÓN */
+/* NOTA DE VENTA */
+.nv-doc{background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;margin-bottom:12px;font-size:12px}
+.nv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--g1)}
+.nv-logo{font-size:20px;font-weight:700;color:var(--g1)}
+.nv-tagline{font-size:10px;color:var(--muted)}
+.nv-titulo{text-align:right}
+.nv-titulo h3{font-size:14px;font-weight:700;color:var(--g1)}
+.nv-titulo p{font-size:11px;color:var(--muted)}
+.nv-section{margin-bottom:10px}
+.nv-section-title{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.nv-table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.nv-table th{background:var(--g1);color:#fff;padding:5px 8px;font-size:10px;text-align:left}
+.nv-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-size:11px}
+.nv-table tr:nth-child(even) td{background:var(--g3)}
+.nv-totales{border-top:2px solid var(--g1);padding-top:8px}
+.nv-total-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
+.nv-total-row.grand{font-size:14px;font-weight:700;color:var(--g1);border-top:1px solid var(--g3);padding-top:6px;margin-top:4px}
+.nv-footer{margin-top:12px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--hint);text-align:center}
 .fact-cliente{background:var(--surface);border-radius:var(--radius-sm);margin-bottom:10px;border:1.5px solid var(--border);overflow:hidden}
 .fact-header{background:var(--g1);color:#fff;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
 .fact-body{padding:8px 13px}
@@ -252,6 +270,7 @@ textarea#fb-config-input{background:rgba(255,255,255,.12);border:1.5px solid rgb
   <!-- Subtabs -->
   <div class="tab-inner">
     <button class="tab-filter active" onclick="setSubTab('nueva',this)">Nueva venta</button>
+    <button class="tab-filter" onclick="setSubTab('nota',this)">Nota de venta</button>
     <button class="tab-filter" onclick="setSubTab('reposicion',this)">Reposición</button>
     <button class="tab-filter" onclick="setSubTab('historial',this)">Historial</button>
     <button class="tab-filter" onclick="setSubTab('facturacion',this)">Facturación</button>
@@ -290,6 +309,54 @@ textarea#fb-config-input{background:rgba(255,255,255,.12);border:1.5px solid rgb
       </div>
       <div class="form-group"><label>Notas</label><input type="text" id="v-notas" placeholder="Observaciones..."></div>
       <button class="btn btn-primary" onclick="registrarVenta()">Registrar venta</button>
+    </div>
+  </div>
+ 
+  <!-- Nota de venta -->
+  <div id="sub-nota" style="display:none">
+    <div class="card">
+      <div class="card-title">Generar nota de venta</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Genera el PDF de la nota de venta para enviar al cliente. Puedes registrarla en el sistema después.</p>
+ 
+      <div class="form-row">
+        <div class="form-group"><label>Fecha</label><input type="date" id="nv-fecha"></div>
+        <div class="form-group"><label>N° Nota</label><input type="text" id="nv-numero" placeholder="NV-001"></div>
+      </div>
+ 
+      <div class="form-group"><label>Cliente / negocio</label>
+        <select id="nv-cliente" onchange="notaRellenarCliente()">
+          <option value="">— Sin especificar —</option>
+        </select>
+      </div>
+ 
+      <div class="form-row">
+        <div class="form-group"><label>Nombre en nota</label><input type="text" id="nv-nombre" placeholder="Nombre del cliente"></div>
+        <div class="form-group"><label>RUC / CI (opcional)</label><input type="text" id="nv-ruc" placeholder="0000000000001"></div>
+      </div>
+ 
+      <div class="form-group"><label>Dirección del cliente (opcional)</label><input type="text" id="nv-direccion" placeholder="Dirección de entrega"></div>
+      <div class="form-group"><label>Teléfono del cliente (opcional)</label><input type="text" id="nv-tel" placeholder="09XXXXXXXX"></div>
+ 
+      <div class="form-group"><label>Canal</label>
+        <select id="nv-canal" onchange="notaCalcTotal()">
+          <option value="d2c">D2C (consumidor directo)</option>
+          <option value="retail_sf">Retail sin factura</option>
+          <option value="retail_cf">Retail con factura (IVA)</option>
+          <option value="b2b">B2B (restaurantes / negocios)</option>
+        </select>
+      </div>
+ 
+      <div class="form-row">
+        <div class="form-group"><label>Pack 6u — 60g c/u</label><input type="number" id="nv-p6" min="0" value="0" inputmode="numeric" oninput="notaCalcTotal()"></div>
+        <div class="form-group"><label>Pack 3u — 100g c/u</label><input type="number" id="nv-p3" min="0" value="0" inputmode="numeric" oninput="notaCalcTotal()"></div>
+      </div>
+ 
+      <div class="form-group"><label>Notas / observaciones</label><input type="text" id="nv-notas" placeholder="Ej: Entrega el viernes, dejar en recepción..."></div>
+ 
+      <div class="preview-box" id="nv-preview">Ingresa cantidades para ver el total</div>
+ 
+      <button class="btn btn-primary" onclick="generarNotaPDF()" style="margin-top:4px">📄 Generar nota de venta PDF</button>
+      <button class="btn btn-secondary" onclick="notaRegistrarVenta()" style="margin-top:8px">+ Registrar también en ventas</button>
     </div>
   </div>
  
@@ -682,7 +749,7 @@ function renderClientes(){
 }
  
 function renderClienteSelects(){
-  ['v-cliente','r-cliente','edit-cliente'].forEach(id=>{
+  ['v-cliente','r-cliente','nv-cliente','edit-cliente'].forEach(id=>{
     const sel=document.getElementById(id);if(!sel)return;
     const cur=sel.value;
     const ph=id==='r-cliente'?'— Selecciona local —':'— Sin especificar —';
@@ -1020,13 +1087,14 @@ window.setFiltro=function(estado,btn){
  
 window.setSubTab=function(id,btn){
   subTabActual=id;
-  ['sub-nueva','sub-reposicion','sub-historial','sub-facturacion'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
+  ['sub-nueva','sub-nota','sub-reposicion','sub-historial','sub-facturacion'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display='none';});
   const el=document.getElementById('sub-'+id);if(el)el.style.display='block';
   document.querySelectorAll('#tab-ventas > .tab-inner .tab-filter').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   if(id==='historial')renderVentas();
   if(id==='facturacion')renderFacturacion();
   if(id==='reposicion'){renderClienteSelects();renderReposiciones();}
+  if(id==='nota'){renderClienteSelects();notaCalcTotal();notaAutoNumero();}
 };
  
 window.showTab=function(id,btn){
@@ -1040,8 +1108,211 @@ window.showTab=function(id,btn){
  
 function setFechasHoy(){
   const h=new Date().toISOString().split('T')[0];
-  ['p-fecha','v-fecha','r-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=h;});
+  ['p-fecha','v-fecha','r-fecha','nv-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=h;});
 }
+ 
+// ── NOTA DE VENTA ──
+window.notaAutoNumero=function(){
+  const el=document.getElementById('nv-numero');if(!el||el.value)return;
+  // Generar número correlativo basado en notas ya existentes en ventas con campo notaNum
+  const existentes=ventas.filter(v=>v.notaNum).map(v=>parseInt(v.notaNum.replace(/\D/g,''))||0);
+  const siguiente=(existentes.length>0?Math.max(...existentes):0)+1;
+  el.value='NV-'+String(siguiente).padStart(3,'0');
+};
+ 
+window.notaRellenarCliente=function(){
+  const clienteId=document.getElementById('nv-cliente').value;
+  const cli=clientes.find(c=>c.id===clienteId);
+  if(cli){
+    document.getElementById('nv-nombre').value=cli.nombre||'';
+    document.getElementById('nv-tel').value=cli.tel||'';
+    document.getElementById('nv-direccion').value=cli.zona||'';
+  }
+};
+ 
+window.notaCalcTotal=function(){
+  const canal=document.getElementById('nv-canal')?.value||'d2c';
+  const p6=+document.getElementById('nv-p6')?.value||0;
+  const p3=+document.getElementById('nv-p3')?.value||0;
+  const pp6=precioP6(canal),pp3=precioP3(canal);
+  const subtotal=p6*pp6+p3*pp3;
+  const el=document.getElementById('nv-preview');
+  if(!el)return;
+  if(p6===0&&p3===0){el.textContent='Ingresa cantidades para ver el total';return;}
+  let txt=`Canal: ${labelCanalLargo(canal)}\n`;
+  if(p6>0)txt+=`${p6} × Pack 6u = $${(p6*pp6).toFixed(2)}\n`;
+  if(p3>0)txt+=`${p3} × Pack 3u = $${(p3*pp3).toFixed(2)}\n`;
+  txt+=`Total: $${subtotal.toFixed(2)}`;
+  el.textContent=txt;
+};
+ 
+window.generarNotaPDF=function(){
+  if(!window.jspdf){alert('Librería PDF cargando, intenta en unos segundos.');return;}
+  const p6=+document.getElementById('nv-p6').value||0;
+  const p3=+document.getElementById('nv-p3').value||0;
+  if(p6===0&&p3===0){alert('Agrega al menos un pack.');return;}
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const canal=document.getElementById('nv-canal').value;
+  const pp6=precioP6(canal),pp3=precioP3(canal);
+  const subtotal=+(p6*pp6+p3*pp3).toFixed(2);
+  const includeIVA=normCanal(canal)==='retail_cf';
+  const baseImponible=includeIVA?+(subtotal/1.15).toFixed(2):subtotal;
+  const ivaVal=includeIVA?+(subtotal-baseImponible).toFixed(2):0;
+  const total=subtotal;
+  const numero=document.getElementById('nv-numero').value||'NV-001';
+  const fecha=document.getElementById('nv-fecha').value||new Date().toISOString().split('T')[0];
+  const nombreCli=document.getElementById('nv-nombre').value||'Sin especificar';
+  const rucCli=document.getElementById('nv-ruc').value||'';
+  const dirCli=document.getElementById('nv-direccion').value||'';
+  const telCli=document.getElementById('nv-tel').value||'';
+  const notas=document.getElementById('nv-notas').value||'';
+  const verde=[27,77,46];
+  const verdeClaro=[234,243,222];
+  const W=210,M=15;
+  // ── ENCABEZADO ──
+  doc.setFillColor(...verde);doc.rect(0,0,W,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(22);doc.setFont('helvetica','bold');doc.text('TIPIC-GO',M,14);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Congelamos lo típico, servimos lo auténtico',M,20);
+  doc.text('RUC: 0105505531',M,26);
+  doc.text('Cuenca, Ecuador · 0984970758 / 0979122867',M,31);
+  doc.text('tipic.go@gmail.com',M,36);
+  // Recuadro nota en esquina derecha
+  doc.setFillColor(255,255,255);doc.roundedRect(130,6,65,28,3,3,'F');
+  doc.setTextColor(...verde);
+  doc.setFontSize(13);doc.setFont('helvetica','bold');doc.text('NOTA DE VENTA',162,14,{align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+  doc.text('N°: '+numero,162,20,{align:'center'});
+  doc.text('Fecha: '+fecha,162,25,{align:'center'});
+  doc.text('Estado: PENDIENTE DE FACTURA',162,30,{align:'center'});
+ 
+  doc.setTextColor(30,30,30);
+  let y=46;
+ 
+  // ── DATOS EMISOR Y RECEPTOR ──
+  doc.setFillColor(...verdeClaro);doc.rect(M,y,W-M*2,28,'F');
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...verde);
+  doc.text('EMISOR',M+3,y+6);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+  doc.text('Tipic-Go · Juan Esteban Ramírez Alava',M+3,y+11);
+  doc.text('RUC: 0105505531 · Régimen General',M+3,y+16);
+  doc.text('Cuenca, Ecuador',M+3,y+21);
+  doc.text('Tel: 0984970758 / 0979122867',M+3,y+26);
+ 
+  const cx=M+(W-M*2)/2+4;
+  doc.setFont('helvetica','bold');doc.setTextColor(...verde);doc.text('RECEPTOR',cx,y+6);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+  doc.text(nombreCli.substring(0,35),cx,y+11);
+  if(rucCli)doc.text('RUC/CI: '+rucCli,cx,y+16);
+  if(dirCli)doc.text(dirCli.substring(0,35),cx,rucCli?y+21:y+16);
+  if(telCli)doc.text('Tel: '+telCli,cx,dirCli?(rucCli?y+26:y+21):y+16);
+  y+=34;
+ 
+  // ── DETALLE DE PRODUCTOS ──
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...verde);
+  doc.text('DETALLE DE PRODUCTOS',M,y);y+=4;
+  doc.autoTable({
+    startY:y,
+    head:[['Ítem','Descripción','Cant.','P. Unit.','Subtotal']],
+    body:[
+      ...(p6>0?[[1,'Pack 6 unidades — Corviche manabita 60g c/u\nCongelado · Sin conservantes · Gluten free',p6,'$'+pp6.toFixed(2),'$'+(p6*pp6).toFixed(2)]]:[]),
+      ...(p3>0?[[p6>0?2:1,'Pack 3 unidades — Corviche manabita 100g c/u\nCongelado · Sin conservantes · Gluten free',p3,'$'+pp3.toFixed(2),'$'+(p3*pp3).toFixed(2)]]:[]),
+    ],
+    headStyles:{fillColor:verde,textColor:255,fontSize:9,fontStyle:'bold'},
+    bodyStyles:{fontSize:9},
+    alternateRowStyles:{fillColor:verdeClaro},
+    columnStyles:{0:{cellWidth:12,halign:'center'},2:{cellWidth:14,halign:'center'},3:{cellWidth:22,halign:'right'},4:{cellWidth:24,halign:'right'}},
+    margin:{left:M,right:M},
+    theme:'striped'
+  });
+  y=doc.lastAutoTable.finalY+6;
+ 
+  // ── TOTALES ──
+  const tw=80,tx=W-M-tw;
+  doc.setFillColor(...verdeClaro);doc.rect(tx,y,tw,includeIVA?28:18,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+  if(includeIVA){
+    doc.text('Base imponible (sin IVA):',tx+3,y+7);doc.text('$'+baseImponible.toFixed(2),tx+tw-3,y+7,{align:'right'});
+    doc.text('IVA 15%:',tx+3,y+14);doc.text('$'+ivaVal.toFixed(2),tx+tw-3,y+14,{align:'right'});
+    doc.setDrawColor(...verde);doc.line(tx+3,y+17,tx+tw-3,y+17);
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...verde);
+    doc.text('TOTAL:',tx+3,y+25);doc.text('$'+total.toFixed(2),tx+tw-3,y+25,{align:'right'});
+    y+=32;
+  } else {
+    doc.setDrawColor(...verde);doc.line(tx+3,y+11,tx+tw-3,y+11);
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...verde);
+    doc.text('TOTAL:',tx+3,y+17);doc.text('$'+total.toFixed(2),tx+tw-3,y+17,{align:'right'});
+    y+=22;
+  }
+ 
+  // Canal
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
+  doc.text('Canal de venta: '+labelCanalLargo(canal),M,y);y+=6;
+ 
+  // ── NOTAS ──
+  if(notas){
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...verde);doc.text('Observaciones:',M,y);y+=4;
+    doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+    const lines=doc.splitTextToSize(notas,W-M*2);doc.text(lines,M,y);y+=lines.length*4+4;
+  }
+ 
+  // ── CONDICIONES ──
+  y+=2;
+  doc.setFillColor(245,245,242);doc.rect(M,y,W-M*2,22,'F');
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...verde);doc.text('Condiciones',M+3,y+5);
+  doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+  doc.text('• Este documento es una nota de venta provisional. No tiene valor tributario.',M+3,y+10);
+  doc.text('• La factura definitiva será emitida una vez confirmado el pedido.',M+3,y+15);
+  doc.text('• Producto congelado: mantener a -18°C. No recongelar una vez descongelado.',M+3,y+20);
+  y+=28;
+ 
+  // ── FIRMA ──
+  doc.setDrawColor(180,180,180);
+  doc.line(M,y+16,M+50,y+16);doc.line(W-M-50,y+16,W-M,y+16);
+  doc.setFontSize(8);doc.setTextColor(100,100,100);
+  doc.text('Firma emisor',M+25,y+20,{align:'center'});
+  doc.text('Firma receptor',W-M-25,y+20,{align:'center'});
+  doc.text('Juan E. Ramírez · Tipic-Go',M+25,y+25,{align:'center'});
+  doc.text(nombreCli.substring(0,25),W-M-25,y+25,{align:'center'});
+ 
+  // ── FOOTER ──
+  const pages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    doc.setFillColor(...verde);doc.rect(0,287,210,10,'F');
+    doc.setFontSize(7);doc.setTextColor(255,255,255);
+    doc.text('Tipic-Go · RUC 0105505531 · tipic.go@gmail.com · @tipigo593 · Cuenca, Ecuador',W/2,292,{align:'center'});
+  }
+ 
+  doc.save('Tipic-Go_Nota_Venta_'+numero+'_'+fecha+'.pdf');
+};
+ 
+window.notaRegistrarVenta=async function(){
+  if(!db){alert('Conecta Firebase primero.');return;}
+  const p6=+document.getElementById('nv-p6').value||0;
+  const p3=+document.getElementById('nv-p3').value||0;
+  if(p6===0&&p3===0){alert('Agrega al menos un pack.');return;}
+  if(p6>stock.p6||p3>stock.p3){alert(`Stock insuficiente.\nDisponible: ${stock.p6} p6u, ${stock.p3} p3u.`);return;}
+  const canal=document.getElementById('nv-canal').value;
+  const clienteId=document.getElementById('nv-cliente').value;
+  const cli=clientes.find(c=>c.id===clienteId);
+  const clienteNombre=document.getElementById('nv-nombre').value||cli?.nombre||'';
+  const total=+(p6*precioP6(canal)+p3*precioP3(canal)).toFixed(2);
+  const notaNum=document.getElementById('nv-numero').value||'';
+  await addDoc(collection(db,'ventas'),{
+    fecha:document.getElementById('nv-fecha').value,
+    canal,clienteId,clienteNombre,p6,p3,total,
+    estado:'pendiente',
+    notas:document.getElementById('nv-notas').value.trim(),
+    notaNum,tipo:'venta',ts:Date.now()
+  });
+  alert('Venta registrada correctamente con nota N° '+notaNum+'.');
+  document.getElementById('nv-p6').value=0;document.getElementById('nv-p3').value=0;
+  document.getElementById('nv-notas').value='';document.getElementById('nv-numero').value='';
+  notaCalcTotal();notaAutoNumero();
+};
  
 window.desconectar=function(){if(!confirm('¿Desconectar?'))return;localStorage.removeItem('tg_fb_cfg');location.reload();};
  
